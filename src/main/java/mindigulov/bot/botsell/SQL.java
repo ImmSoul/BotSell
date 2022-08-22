@@ -1,9 +1,6 @@
 package mindigulov.bot.botsell;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class SQL {
     Connection connection;
@@ -20,11 +17,24 @@ public class SQL {
     }
 
     public void setName(String name) throws SQLException {
-        statement = connection.prepareStatement("INSERT INTO public.users (user_name) VALUES (" + name + ");");
+
+        statement = connection.prepareStatement("INSERT INTO public.users (user_name) VALUES ('" +name+ "'::text)");
         statement.executeUpdate();
+        System.out.println("запрос улетел");
         connection.close();
     }
     public void setSQL(String sql) throws SQLException {
 
     }
+
+    public boolean checkId(Long id) throws SQLException {
+        statement = connection.prepareStatement("SELECT EXISTS(SELECT user_telegram_id FROM public.users WHERE user_telegram_id = "+ id.toString() +" );");
+        ResultSet resultSet = statement.executeQuery();
+        Boolean checkId = false;
+        while (resultSet.next()) {
+            checkId = resultSet.getBoolean(1);
+        }
+            return checkId;
+    }
+
 }

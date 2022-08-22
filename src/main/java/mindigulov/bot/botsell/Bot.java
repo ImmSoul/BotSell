@@ -3,6 +3,7 @@ package mindigulov.bot.botsell;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.SQLException;
@@ -10,6 +11,8 @@ import java.sql.SQLException;
 public class Bot extends TelegramLongPollingBot {
 
     SQL sql;
+    Integer userId;
+    User user;
 
     public Bot() throws SQLException, ClassNotFoundException {
         SQL sql = new SQL();
@@ -28,13 +31,21 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            try {
-                String text = update.getMessage().getText();
-                sql.setName(text);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        user = new User(update.getMessage().getChat().getId(), update.getMessage().getChat().getFirstName(), update.getMessage().getChat().isUserChat());
+
+        try {
+          if (sql.checkId(user.getId())) {
+              System.out.println("ЮЗЕР ЕСТЬ");
+          } else {
+              System.out.println("ЮЗЕР НЕТЬ!");
+          }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
     }
+
+
+
+
 }
