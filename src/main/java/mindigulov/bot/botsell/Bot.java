@@ -2,6 +2,8 @@ package mindigulov.bot.botsell;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -37,12 +39,30 @@ public class Bot extends TelegramLongPollingBot {
           if (sql.checkId(user.getId())) {
               System.out.println("ЮЗЕР ЕСТЬ");
           } else {
+              starting(user, update.getCallbackQuery());
               System.out.println("ЮЗЕР НЕТЬ!");
           }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
+    }
+
+    public void starting(User user, CallbackQuery callbackQuery) throws TelegramApiException, InterruptedException {
+        SendMessage sendMessage = new SendMessage(user.getId().toString(), "Привет! Это чат с результатами твоих продаж! Давай познакомимся, укажи свою имя и фамилию в формате Имя_Фамилия. Например Алексей_Петров");
+        execute(sendMessage);
+        while (callbackQuery == null) {
+            Thread.sleep(1000);
+        }
+
+        System.out.println(callbackQuery.getData());
+
+
+        System.out.println("call bak is = " + callbackQuery.getMessage());
     }
 
 

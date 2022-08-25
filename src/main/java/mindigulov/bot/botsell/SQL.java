@@ -37,4 +37,10 @@ public class SQL {
             return checkId;
     }
 
+    public void addUser(Long id, String name) throws SQLException {
+        statement = connection.prepareStatement ("INSERT into public.users (user_name, user_telegram_id) VALUES ('" + name + "'," + id + ");");
+        statement.executeUpdate();
+        System.out.println(name + " с айдишником " + id + " добавлен");
+    }
+
 }
